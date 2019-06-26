@@ -1,7 +1,8 @@
+const jwt = require('jsonwebtoken');
 const Joi = require('@hapi/joi');
 const mongoose = require('mongoose');
 
-const User = mongoose.model('User', new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -20,8 +21,16 @@ const User = mongoose.model('User', new mongoose.Schema({
     required: true,
     minlength: 5,
     maxlength: 1024
-  }
-}));
+  },
+  isAdmin: Boolean
+});
+
+userSchema.methods.generateAuthToken = function() { // arrow functions do not have a this keyword
+  const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, process.env.API_KEY);
+  return token;
+}
+
+const User = mongoose.model('User', userSchema);
 
 function validateUser(user) {
   const schema = {

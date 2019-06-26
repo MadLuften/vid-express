@@ -1,3 +1,5 @@
+const admin = require('../middleware/admin');
+const auth = require('../middleware/auth');
 const { Rental, validate } = require('../models/rental');
 const { Movie } = require('../models/movie');
 const { Customer } = require('../models/customer');
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   let customer = ''; // TODO find way to make constant for better stability
   let movie = '';
   const { error } = validate(req.body);
